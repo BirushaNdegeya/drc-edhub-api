@@ -15,6 +15,10 @@ export class UsersService {
     return this.userModel.findOne({ where: { email } });
   }
 
+  async findById(id: number) {
+    return this.userModel.findByPk(id);
+  }
+
   async createFromGoogle(profile: any) {
     const email = profile.emails && profile.emails[0] && profile.emails[0].value;
     const avatar = profile.photos && profile.photos[0] && profile.photos[0].value;

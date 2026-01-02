@@ -1,4 +1,4 @@
-import { Controller, Patch, Body, NotFoundException, UseGuards, Req } from '@nestjs/common';
+import { Controller, Patch, Body, NotFoundException, UseGuards, Req, Get } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -16,6 +16,39 @@ import { UserDto } from './dto/user.dto';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Get('me')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('jwt')
+  @ApiOperation({ summary: 'Get currently authenticated user' })
+  @ApiOkResponse({
+    description: 'Authenticated user returned',
+    type: UserDto,
+    schema: {
+      example: {
+        firstname: 'John',
+        lastname: 'Doe',
+        surname: 'Middle',
+        age: 20,
+        school: 'St Mary School',
+        province: 'Province X',
+        location: 'City Y',
+        role: 'student',
+        sex: 'male',
+        section: 'A',
+        class: 'Grade 1',
+        email: 'user@example.com',
+        avatar: 'https://lh3.googleusercontent.com/a-/AOh14Gj...photo.jpg',
+      },
+    },
+  })
+  @ApiNotFoundResponse({ description: 'User not found (invalid token id)' })
+  async me(@Req() req: any) {
+    const id = req.user?.id;
+    const user = await this.usersService.findById(id);
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
 
   @Patch()
   @UseGuards(AuthGuard('jwt'))
