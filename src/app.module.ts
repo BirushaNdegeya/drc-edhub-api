@@ -1,8 +1,33 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit, Injectable, Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { Sequelize } from 'sequelize-typescript';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+
+// Ensure DB schema includes avatar column when app boots (safe, idempotent)
+@Injectable()
+export class DbSchemaSync implements OnModuleInit {
+  private readonly logger = new Logger(DbSchemaSync.name);
+
+  constructor(private sequelize: Sequelize) {}
+
+  async onModuleInit() {
+    try {
+      if (!this.sequelize) {
+        this.logger.warn('Sequelize instance not available, skipping schema sync');
+        return;
+      }
+      // Add avatar column if missing
+      await this.sequelize.query('ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "avatar" VARCHAR;');
+      this.logger.log('Ensured users.avatar column exists');
+    } catch (err) {
+      this.logger.error('Failed to ensure users.avatar column exists', err as any);
+    }
+  }
+}
 
 @Module({
   imports: [
@@ -22,8 +47,10 @@ import { AppService } from './app.service';
         logging: false,
       }),
     }),
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, DbSchemaSync],
 })
 export class AppModule {}
