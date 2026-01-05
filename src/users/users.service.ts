@@ -15,7 +15,7 @@ export class UsersService {
     return this.userModel.findOne({ where: { email } });
   }
 
-  async findById(id: number) {
+  async findById(id: string) {
     return this.userModel.findByPk(id);
   }
 
@@ -42,7 +42,7 @@ export class UsersService {
     return user;
   }
 
-  async update(id: number, dto: UpdateUserDto) {
+  async update(id: string, dto: UpdateUserDto) {
     const user = await this.userModel.findByPk(id);
     if (!user) return null;
     return user.update(dto as any);
