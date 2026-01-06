@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { Sequelize } from 'sequelize-typescript';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { AcademicYearsModule } from './academic-years/academic-years.module';
 
 // Ensure DB schema includes avatar column when app boots (safe, idempotent)
 @Injectable()
@@ -66,6 +67,7 @@ export class DbSchemaSync implements OnModuleInit {
 
     UsersModule,
     AuthModule,
+    AcademicYearsModule,
   ],
   controllers: [AppController],
   providers: [AppService, DbSchemaSync],
