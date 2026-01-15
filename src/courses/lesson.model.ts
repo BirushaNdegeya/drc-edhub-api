@@ -1,5 +1,15 @@
 // lesson.model.ts
-import { Table, Column, Model, DataType, PrimaryKey, Default, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  PrimaryKey,
+  Default,
+  ForeignKey,
+  BelongsTo,
+  HasMany,
+} from 'sequelize-typescript';
 import { Module } from './module.model';
 import { User } from '../users/user.model';
 import { LessonProgress } from './lesson-progress.model';
@@ -25,7 +35,7 @@ export class Lesson extends Model<Lesson> {
 
   @Column({
     type: DataType.ENUM('video', 'text', 'quiz', 'assignment'),
-    allowNull: false
+    allowNull: false,
   })
   contentType!: ContentType;
 

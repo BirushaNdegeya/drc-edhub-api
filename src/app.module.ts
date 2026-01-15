@@ -44,7 +44,7 @@ export class DbSchemaSync implements OnModuleInit {
         WHERE table_schema = 'public' 
         AND table_name = 'schools'
       `);
-      
+
       if (tableResults.length > 0) {
         // Add foreign key constraint if it doesn't exist
         const [constraintResults] = await this.sequelize.query(`
@@ -53,7 +53,7 @@ export class DbSchemaSync implements OnModuleInit {
           WHERE table_name = 'users' 
           AND constraint_name = 'users_schoolId_fkey'
         `);
-        
+
         if (constraintResults.length === 0) {
           await this.sequelize.query(`
             ALTER TABLE "users" 
@@ -66,13 +66,12 @@ export class DbSchemaSync implements OnModuleInit {
           this.logger.log('Added foreign key constraint for users.schoolId');
         }
       } else {
-        this.logger.warn('Schools table does not exist yet, skipping foreign key constraint. It will be added when schools table is created.');
+        this.logger.warn(
+          'Schools table does not exist yet, skipping foreign key constraint. It will be added when schools table is created.',
+        );
       }
     } catch (err) {
-      this.logger.error(
-        'Failed to ensure users schema columns exist',
-        err as any,
-      );
+      this.logger.error('Failed to ensure users schema columns exist', err);
     }
   }
 }

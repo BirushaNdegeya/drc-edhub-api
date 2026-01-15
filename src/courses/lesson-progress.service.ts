@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { LessonProgress } from './lesson-progress.model';
 import { CreateLessonProgressDto } from './dto/create-lesson-progress.dto';
@@ -11,7 +15,9 @@ export class LessonProgressService {
     private lessonProgressModel: typeof LessonProgress,
   ) {}
 
-  async create(createLessonProgressDto: CreateLessonProgressDto): Promise<LessonProgress> {
+  async create(
+    createLessonProgressDto: CreateLessonProgressDto,
+  ): Promise<LessonProgress> {
     // Check if progress already exists
     const existing = await this.lessonProgressModel.findOne({
       where: {
@@ -21,11 +27,15 @@ export class LessonProgressService {
     });
 
     if (existing) {
-      throw new ConflictException('Progress record already exists for this user and lesson');
+      throw new ConflictException(
+        'Progress record already exists for this user and lesson',
+      );
     }
 
-    const progress = await this.lessonProgressModel.create(createLessonProgressDto as any);
-    
+    const progress = await this.lessonProgressModel.create(
+      createLessonProgressDto as any,
+    );
+
     // Set completedAt if completed is true
     if (progress.completed && !progress.completedAt) {
       progress.completedAt = new Date();
@@ -51,9 +61,12 @@ export class LessonProgressService {
     return progress;
   }
 
-  async update(id: string, updateLessonProgressDto: UpdateLessonProgressDto): Promise<LessonProgress> {
+  async update(
+    id: string,
+    updateLessonProgressDto: UpdateLessonProgressDto,
+  ): Promise<LessonProgress> {
     const progress = await this.findOne(id);
-    
+
     // Set completedAt if completed is being set to true
     if (updateLessonProgressDto.completed === true && !progress.completedAt) {
       await progress.update({
@@ -63,7 +76,7 @@ export class LessonProgressService {
     } else {
       await progress.update(updateLessonProgressDto);
     }
-    
+
     return progress.reload();
   }
 
@@ -86,7 +99,10 @@ export class LessonProgressService {
     });
   }
 
-  async findByUserAndLesson(userId: string, lessonId: string): Promise<LessonProgress | null> {
+  async findByUserAndLesson(
+    userId: string,
+    lessonId: string,
+  ): Promise<LessonProgress | null> {
     return this.lessonProgressModel.findOne({
       where: { userId, lessonId },
       include: ['user', 'lesson'],

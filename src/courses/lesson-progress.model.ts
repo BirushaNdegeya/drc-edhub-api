@@ -1,10 +1,20 @@
 // lesson-progress.model.ts
-import { Table, Column, Model, DataType, PrimaryKey, Default, ForeignKey, BelongsTo, Index } from 'sequelize-typescript';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  PrimaryKey,
+  Default,
+  ForeignKey,
+  BelongsTo,
+  Index,
+} from 'sequelize-typescript';
 import { User } from '../users/user.model';
 import { Lesson } from './lesson.model';
 
-@Table({ 
-  tableName: 'lesson_progress', 
+@Table({
+  tableName: 'lesson_progress',
   timestamps: true,
   indexes: [
     {

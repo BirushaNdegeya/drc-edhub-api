@@ -1,4 +1,10 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+  Logger,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -26,9 +32,13 @@ export class ResponseLoggerInterceptor implements NestInterceptor {
           } catch (e) {
             payload = '[Unserializable response]';
           }
-          this.logger.log(`${method} ${url} ${status} - ${ms}ms - response: ${payload}`);
+          this.logger.log(
+            `${method} ${url} ${status} - ${ms}ms - response: ${payload}`,
+          );
         } catch (err) {
-          this.logger.log(`${method} ${url} - response logging failed: ${err?.message ?? err}`);
+          this.logger.log(
+            `${method} ${url} - response logging failed: ${err?.message ?? err}`,
+          );
         }
       }),
     );

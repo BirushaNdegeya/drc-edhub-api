@@ -1,10 +1,20 @@
 // course-assignment.model.ts
-import { Table, Column, Model, DataType, PrimaryKey, Default, ForeignKey, BelongsTo, Index } from 'sequelize-typescript';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  PrimaryKey,
+  Default,
+  ForeignKey,
+  BelongsTo,
+  Index,
+} from 'sequelize-typescript';
 import { Course } from './course.model';
 import { User } from '../users/user.model';
 
-@Table({ 
-  tableName: 'course_assignments', 
+@Table({
+  tableName: 'course_assignments',
   timestamps: true,
   indexes: [
     {

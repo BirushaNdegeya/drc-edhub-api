@@ -20,8 +20,10 @@ export class UsersService {
   }
 
   async createFromGoogle(profile: any) {
-    const email = profile.emails && profile.emails[0] && profile.emails[0].value;
-    const avatar = profile.photos && profile.photos[0] && profile.photos[0].value;
+    const email =
+      profile.emails && profile.emails[0] && profile.emails[0].value;
+    const avatar =
+      profile.photos && profile.photos[0] && profile.photos[0].value;
     const [user] = await this.userModel.findOrCreate({
       where: { googleId: profile.id },
       // cast defaults to any to satisfy Sequelize typings for creation attributes

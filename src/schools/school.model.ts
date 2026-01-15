@@ -1,5 +1,13 @@
 // school.model.ts
-import { Table, Column, Model, DataType, PrimaryKey, Default, HasMany } from 'sequelize-typescript';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  PrimaryKey,
+  Default,
+  HasMany,
+} from 'sequelize-typescript';
 import { User } from '../users/user.model';
 import { Course } from '../courses/course.model';
 

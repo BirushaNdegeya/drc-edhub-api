@@ -1,26 +1,39 @@
 import { Controller, Get, Req, UseGuards, Res } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
-import { ApiTags, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
-import { TokenDto } from './dto/token.dto';
 import type { Response } from 'express';
 
-@ApiTags('auth')
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private usersService: UsersService, private authService: AuthService) {}
+  constructor(
+    private usersService: UsersService,
+    private authService: AuthService,
+  ) {}
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  @ApiOperation({ summary: 'Start Google OAuth2 flow' })
+  @ApiOperation({ summary: 'Start Google OAuth2 authentication flow' })
+  @ApiResponse({ status: 302, description: 'Redirects to Google login page' })
   async googleAuth() {
     // initiates the Google OAuth2 login flow
   }
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  @ApiOperation({ summary: 'Google OAuth2 callback - redirects to frontend with JWT token' })
+  @ApiOperation({
+    summary: 'Google OAuth2 callback - redirects to frontend with JWT token',
+  })
+  @ApiResponse({
+    status: 302,
+    description: 'Redirects to frontend with access token in query parameter',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Google authentication failed',
+  })
   async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
     const profile = req.user;
     const user = await this.usersService.createFromGoogle(profile);

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Enrollment } from './enrollment.model';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
@@ -43,7 +47,10 @@ export class EnrollmentsService {
     return enrollment;
   }
 
-  async update(id: string, updateEnrollmentDto: UpdateEnrollmentDto): Promise<Enrollment> {
+  async update(
+    id: string,
+    updateEnrollmentDto: UpdateEnrollmentDto,
+  ): Promise<Enrollment> {
     const enrollment = await this.findOne(id);
     await enrollment.update(updateEnrollmentDto);
     return enrollment;

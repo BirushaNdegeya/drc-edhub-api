@@ -1,12 +1,27 @@
 // course.model.ts
-import { Table, Column, Model, DataType, PrimaryKey, Default, ForeignKey, BelongsTo, HasMany, BelongsToMany } from 'sequelize-typescript';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  PrimaryKey,
+  Default,
+  ForeignKey,
+  BelongsTo,
+  HasMany,
+  BelongsToMany,
+} from 'sequelize-typescript';
 import { School } from '../schools/school.model';
 import { User } from '../users/user.model';
 import { Module } from './module.model';
 import { Enrollment } from './enrollment.model';
 import { CourseAssignment } from './course-assignment.model';
 
-export type CourseStatus = 'draft' | 'pending_review' | 'published' | 'archived';
+export type CourseStatus =
+  | 'draft'
+  | 'pending_review'
+  | 'published'
+  | 'archived';
 
 @Table({ tableName: 'courses', timestamps: true })
 export class Course extends Model<Course> {
@@ -40,7 +55,7 @@ export class Course extends Model<Course> {
 
   @Column({
     type: DataType.ENUM('draft', 'pending_review', 'published', 'archived'),
-    defaultValue: 'draft'
+    defaultValue: 'draft',
   })
   status!: CourseStatus;
 

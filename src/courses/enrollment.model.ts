@@ -1,10 +1,20 @@
 // enrollment.model.ts
-import { Table, Column, Model, DataType, PrimaryKey, Default, ForeignKey, BelongsTo, Index } from 'sequelize-typescript';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  PrimaryKey,
+  Default,
+  ForeignKey,
+  BelongsTo,
+  Index,
+} from 'sequelize-typescript';
 import { User } from '../users/user.model';
 import { Course } from './course.model';
 
-@Table({ 
-  tableName: 'enrollments', 
+@Table({
+  tableName: 'enrollments',
   timestamps: true,
   indexes: [
     {

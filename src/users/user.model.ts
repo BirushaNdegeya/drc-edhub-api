@@ -1,11 +1,26 @@
 // user.model.ts
-import { Table, Column, Model, DataType, PrimaryKey, Default, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  PrimaryKey,
+  Default,
+  ForeignKey,
+  BelongsTo,
+  HasMany,
+} from 'sequelize-typescript';
 import { School } from '../schools/school.model';
 import { Course } from '../courses/course.model';
 import { Enrollment } from '../courses/enrollment.model';
 import { LessonProgress } from '../courses/lesson-progress.model';
 
-export type UserRole = 'student' | 'instructor' | 'admin' | 'inspector' | 'school-admin';
+export type UserRole =
+  | 'student'
+  | 'instructor'
+  | 'admin'
+  | 'inspector'
+  | 'school-admin';
 
 @Table({ tableName: 'users', timestamps: true })
 export class User extends Model<User> {
@@ -41,7 +56,13 @@ export class User extends Model<User> {
   location?: string;
 
   @Column({
-    type: DataType.ENUM('student', 'instructor', 'admin', 'inspector', 'school-admin'),
+    type: DataType.ENUM(
+      'student',
+      'instructor',
+      'admin',
+      'inspector',
+      'school-admin',
+    ),
     allowNull: false,
     defaultValue: 'student',
   })
@@ -69,7 +90,10 @@ export class User extends Model<User> {
   @HasMany(() => Course, { foreignKey: 'createdById', as: 'createdCourses' })
   createdCourses!: Course[];
 
-  @HasMany(() => Course, { foreignKey: 'instructorId', as: 'instructedCourses' })
+  @HasMany(() => Course, {
+    foreignKey: 'instructorId',
+    as: 'instructedCourses',
+  })
   instructedCourses!: Course[];
 
   @HasMany(() => Enrollment)

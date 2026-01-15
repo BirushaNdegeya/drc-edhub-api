@@ -1,4 +1,12 @@
-import { Controller, Patch, Body, NotFoundException, UseGuards, Req, Get } from '@nestjs/common';
+import {
+  Controller,
+  Patch,
+  Body,
+  NotFoundException,
+  UseGuards,
+  Req,
+  Get,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -53,7 +61,9 @@ export class UsersController {
   @Patch()
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('jwt')
-  @ApiOperation({ summary: 'Update currently authenticated user (id from token)' })
+  @ApiOperation({
+    summary: 'Update currently authenticated user (id from token)',
+  })
   @ApiBody({
     type: UpdateUserDto,
     description: 'Fields to update. Only include fields you want to change.',
@@ -65,10 +75,10 @@ export class UsersController {
         email: 'jane@example.com',
         role: 'student',
         sex: 'female',
-          school: 'St Mary School',
-          province: 'Province X',
-          location: 'City Y',
-          avatar: 'https://lh3.googleusercontent.com/a-/AOh14Gj...photo.jpg',
+        school: 'St Mary School',
+        province: 'Province X',
+        location: 'City Y',
+        avatar: 'https://lh3.googleusercontent.com/a-/AOh14Gj...photo.jpg',
         section: 'A',
         class: 'Grade 3',
       },
@@ -79,7 +89,7 @@ export class UsersController {
     type: UserDto,
     schema: {
       example: {
-          id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
         firstname: 'Jane',
         lastname: 'Doe',
         surname: null,
@@ -89,10 +99,10 @@ export class UsersController {
         location: 'City Y',
         role: 'student',
         sex: 'female',
-          section: 'A',
-          class: 'Grade 3',
-          email: 'jane@example.com',
-          avatar: 'https://lh3.googleusercontent.com/a-/AOh14Gj...photo.jpg',
+        section: 'A',
+        class: 'Grade 3',
+        email: 'jane@example.com',
+        avatar: 'https://lh3.googleusercontent.com/a-/AOh14Gj...photo.jpg',
         createdAt: '2026-01-01T12:00:00.000Z',
         updatedAt: '2026-01-02T12:00:00.000Z',
       },

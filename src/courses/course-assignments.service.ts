@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CourseAssignment } from './course-assignment.model';
 import { Course } from './course.model';
@@ -14,7 +18,9 @@ export class CourseAssignmentsService {
     private courseModel: typeof Course,
   ) {}
 
-  async create(createCourseAssignmentDto: CreateCourseAssignmentDto): Promise<CourseAssignment> {
+  async create(
+    createCourseAssignmentDto: CreateCourseAssignmentDto,
+  ): Promise<CourseAssignment> {
     // Check if assignment already exists
     const existing = await this.courseAssignmentModel.findOne({
       where: {
@@ -24,13 +30,19 @@ export class CourseAssignmentsService {
     });
 
     if (existing) {
-      throw new ConflictException('Instructor is already assigned to this course');
+      throw new ConflictException(
+        'Instructor is already assigned to this course',
+      );
     }
 
-    const assignment = await this.courseAssignmentModel.create(createCourseAssignmentDto as any);
-    
+    const assignment = await this.courseAssignmentModel.create(
+      createCourseAssignmentDto as any,
+    );
+
     // Update course.instructorId if it's null
-    const course = await this.courseModel.findByPk(createCourseAssignmentDto.courseId);
+    const course = await this.courseModel.findByPk(
+      createCourseAssignmentDto.courseId,
+    );
     if (course && !course.instructorId) {
       course.instructorId = createCourseAssignmentDto.instructorId;
       await course.save();
@@ -55,7 +67,10 @@ export class CourseAssignmentsService {
     return assignment;
   }
 
-  async update(id: string, updateCourseAssignmentDto: UpdateCourseAssignmentDto): Promise<CourseAssignment> {
+  async update(
+    id: string,
+    updateCourseAssignmentDto: UpdateCourseAssignmentDto,
+  ): Promise<CourseAssignment> {
     const assignment = await this.findOne(id);
     await assignment.update(updateCourseAssignmentDto);
     return assignment;
