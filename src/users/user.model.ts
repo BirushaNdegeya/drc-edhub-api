@@ -1,4 +1,9 @@
-import { Table, Column, Model, DataType, PrimaryKey, Default } from 'sequelize-typescript';
+// user.model.ts
+import { Table, Column, Model, DataType, PrimaryKey, Default, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
+import { School } from '../schools/school.model';
+import { Course } from '../courses/course.model';
+import { Enrollment } from '../courses/enrollment.model';
+import { LessonProgress } from '../courses/lesson-progress.model';
 
 export type UserRole = 'student' | 'instructor' | 'admin' | 'inspector' | 'school-admin';
 
@@ -8,6 +13,7 @@ export class User extends Model<User> {
   @Default(DataType.UUIDV4)
   @Column({ type: DataType.UUID })
   declare id: string;
+
   @Column({ type: DataType.STRING, allowNull: false })
   firstname!: string;
 
@@ -20,8 +26,13 @@ export class User extends Model<User> {
   @Column({ type: DataType.INTEGER, allowNull: true })
   age?: number;
 
-  @Column({ type: DataType.STRING, allowNull: true })
-  school?: string;
+  // School association
+  @ForeignKey(() => School)
+  @Column({ type: DataType.UUID, allowNull: true })
+  schoolId?: string;
+
+  @BelongsTo(() => School)
+  school?: School;
 
   @Column({ type: DataType.STRING, allowNull: true })
   province?: string;
@@ -53,4 +64,17 @@ export class User extends Model<User> {
 
   @Column({ type: DataType.STRING, allowNull: true })
   googleId?: string;
+
+  // Associations
+  @HasMany(() => Course, { foreignKey: 'createdById', as: 'createdCourses' })
+  createdCourses!: Course[];
+
+  @HasMany(() => Course, { foreignKey: 'instructorId', as: 'instructedCourses' })
+  instructedCourses!: Course[];
+
+  @HasMany(() => Enrollment)
+  enrollments!: Enrollment[];
+
+  @HasMany(() => LessonProgress)
+  lessonProgresses!: LessonProgress[];
 }
