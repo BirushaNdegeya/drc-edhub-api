@@ -30,9 +30,47 @@ export class DbSchemaSync implements OnModuleInit {
         'ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "avatar" VARCHAR;',
       );
       this.logger.log('Ensured users.avatar column exists');
+
+      // Add schoolId column if missing
+      await this.sequelize.query(
+        'ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "schoolId" UUID;',
+      );
+      this.logger.log('Ensured users.schoolId column exists');
+
+      // Check if schools table exists before adding foreign key
+      const [tableResults] = await this.sequelize.query(`
+        SELECT table_name 
+        FROM information_schema.tables 
+        WHERE table_schema = 'public' 
+        AND table_name = 'schools'
+      `);
+      
+      if (tableResults.length > 0) {
+        // Add foreign key constraint if it doesn't exist
+        const [constraintResults] = await this.sequelize.query(`
+          SELECT constraint_name 
+          FROM information_schema.table_constraints 
+          WHERE table_name = 'users' 
+          AND constraint_name = 'users_schoolId_fkey'
+        `);
+        
+        if (constraintResults.length === 0) {
+          await this.sequelize.query(`
+            ALTER TABLE "users" 
+            ADD CONSTRAINT "users_schoolId_fkey" 
+            FOREIGN KEY ("schoolId") 
+            REFERENCES "schools"("id") 
+            ON DELETE SET NULL 
+            ON UPDATE CASCADE;
+          `);
+          this.logger.log('Added foreign key constraint for users.schoolId');
+        }
+      } else {
+        this.logger.warn('Schools table does not exist yet, skipping foreign key constraint. It will be added when schools table is created.');
+      }
     } catch (err) {
       this.logger.error(
-        'Failed to ensure users.avatar column exists',
+        'Failed to ensure users schema columns exist',
         err as any,
       );
     }
