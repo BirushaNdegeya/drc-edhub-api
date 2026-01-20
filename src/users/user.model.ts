@@ -22,6 +22,13 @@ export type UserRole =
   | 'inspector'
   | 'school-admin';
 
+export type EducationLevel =
+  | 'nursery'
+  | 'primary'
+  | 'secondary'
+  | 'university'
+  | 'master';
+
 @Table({ tableName: 'users', timestamps: true })
 export class User extends Model<User> {
   @PrimaryKey
@@ -77,8 +84,23 @@ export class User extends Model<User> {
   @Column({ type: DataType.STRING, allowNull: true })
   class?: string;
 
+  @Column({ type: DataType.STRING, allowNull: false })
+  email!: string;
+
   @Column({ type: DataType.STRING, allowNull: true })
-  email?: string;
+  bio?: string;
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  country?: string;
+
+  @Column({ type: DataType.DATE, allowNull: true })
+  dateBirth?: Date;
+
+  @Column({
+    type: DataType.ENUM('nursery', 'primary', 'secondary', 'university', 'master'),
+    allowNull: true,
+  })
+  level?: EducationLevel;
 
   @Column({ type: DataType.STRING, allowNull: true })
   avatar?: string;

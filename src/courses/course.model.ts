@@ -16,12 +16,15 @@ import { User } from '../users/user.model';
 import { Module } from './module.model';
 import { Enrollment } from './enrollment.model';
 import { CourseAssignment } from './course-assignment.model';
+import { Level } from './level.model';
 
 export type CourseStatus =
   | 'draft'
   | 'pending_review'
   | 'published'
   | 'archived';
+
+export type PricingModel = 'free' | 'premium';
 
 @Table({ tableName: 'courses', timestamps: true })
 export class Course extends Model<Course> {
@@ -75,6 +78,36 @@ export class Course extends Model<Course> {
 
   @Column({ type: DataType.DATE, allowNull: true })
   publishedAt?: Date;
+
+  @Default(false)
+  @Column({ type: DataType.BOOLEAN })
+  published!: boolean;
+
+  @Default(0)
+  @Column({ type: DataType.INTEGER })
+  views!: number;
+
+  @Column({
+    type: DataType.ENUM('free', 'premium'),
+    defaultValue: 'free',
+  })
+  pricingModel!: PricingModel;
+
+  @Column({ type: DataType.DECIMAL(10, 2), allowNull: true })
+  price?: number;
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  class?: string;
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  section?: string;
+
+  @ForeignKey(() => Level)
+  @Column({ type: DataType.UUID, allowNull: true })
+  levelId?: string;
+
+  @BelongsTo(() => Level)
+  level?: Level;
 
   // Associations
   @HasMany(() => Module)

@@ -8,6 +8,7 @@ import { Lesson } from './lesson.model';
 import { Enrollment } from './enrollment.model';
 import { LessonProgress } from './lesson-progress.model';
 import { CourseAssignment } from './course-assignment.model';
+import { Level } from './level.model';
 import { CoursesController } from './courses.controller';
 import { CoursesService } from './courses.service';
 import { ModulesController } from './modules.controller';
@@ -22,6 +23,7 @@ import { CourseAssignmentsController } from './course-assignments.controller';
 import { CourseAssignmentsService } from './course-assignments.service';
 import { UsersModule } from '../users/users.module';
 import { AdminGuard } from '../common/guards/admin.guard';
+import { SchoolAdminGuard } from '../common/guards/school-admin.guard';
 
 @Module({
   imports: [
@@ -32,6 +34,7 @@ import { AdminGuard } from '../common/guards/admin.guard';
       Enrollment,
       LessonProgress,
       CourseAssignment,
+      Level,
     ]),
     UsersModule,
     JwtModule.registerAsync({
@@ -61,6 +64,7 @@ import { AdminGuard } from '../common/guards/admin.guard';
     LessonProgressService,
     CourseAssignmentsService,
     AdminGuard,
+    SchoolAdminGuard,
   ],
   exports: [
     SequelizeModule,

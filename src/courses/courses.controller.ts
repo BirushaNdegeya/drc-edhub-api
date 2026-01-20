@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   UseGuards,
   Query,
+  Request,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -20,7 +21,11 @@ import {
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
+import { CreateSchoolCourseDto } from './dto/create-school-course.dto';
+import { AssignInstructorsDto } from './dto/assign-instructors.dto';
+import { PublishCourseDto } from './dto/publish-course.dto';
 import { AdminGuard } from '../common/guards/admin.guard';
+import { SchoolAdminGuard } from '../common/guards/school-admin.guard';
 
 @ApiTags('Courses')
 @Controller('courses')
@@ -97,5 +102,76 @@ export class CoursesController {
   @ApiResponse({ status: 404, description: 'Course not found' })
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.coursesService.remove(id);
+  }
+
+  // School Admin Course Management Endpoints
+
+  @Post('school/create')
+  @UseGuards(SchoolAdminGuard)
+  @ApiBearerAuth('jwt')
+  @ApiOperation({ summary: 'Create a course for school (School admin only)' })
+  @ApiResponse({ status: 201, description: 'Course created successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized - School admin token required' })
+  async createSchoolCourse(
+    @Request() req: any,
+    @Body() createSchoolCourseDto: CreateSchoolCourseDto,
+  ) {
+    return this.coursesService.createSchoolCourse(
+      req.user.schoolId,
+      req.user.id,
+      createSchoolCourseDto,
+    );
+  }
+
+  @Post(':id/assign-instructors')
+  @UseGuards(SchoolAdminGuard)
+  @ApiBearerAuth('jwt')
+  @ApiOperation({ summary: 'Assign multiple instructors to a course (School admin only)' })
+  @ApiResponse({ status: 200, description: 'Instructors assigned successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized - School admin token required' })
+  @ApiResponse({ status: 404, description: 'Course or instructor not found' })
+  async assignInstructors(
+    @Param('id', ParseUUIDPipe) courseId: string,
+    @Body() assignInstructorsDto: AssignInstructorsDto,
+  ) {
+    return this.coursesService.assignInstructorsToCourse(
+      courseId,
+      assignInstructorsDto.instructorIds,
+    );
+  }
+
+  @Patch(':id/publish')
+  @UseGuards(SchoolAdminGuard)
+  @ApiBearerAuth('jwt')
+  @ApiOperation({ summary: 'Publish or unpublish a course (School admin only)' })
+  @ApiResponse({ status: 200, description: 'Course published/unpublished successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized - School admin token required' })
+  @ApiResponse({ status: 404, description: 'Course not found' })
+  async publishCourse(
+    @Param('id', ParseUUIDPipe) courseId: string,
+    @Body() publishCourseDto: PublishCourseDto,
+  ) {
+    return this.coursesService.publishCourse(courseId, publishCourseDto);
+  }
+
+  @Get('school/my-courses')
+  @UseGuards(SchoolAdminGuard)
+  @ApiBearerAuth('jwt')
+  @ApiOperation({ summary: 'Get all courses for school (School admin only)' })
+  @ApiResponse({ status: 200, description: 'List of school courses' })
+  @ApiResponse({ status: 401, description: 'Unauthorized - School admin token required' })
+  async getSchoolCourses(@Request() req: any) {
+    return this.coursesService.getSchoolCourses(req.user.schoolId);
+  }
+
+  @Get(':id/instructors')
+  @UseGuards(SchoolAdminGuard)
+  @ApiBearerAuth('jwt')
+  @ApiOperation({ summary: 'Get all instructors assigned to a course (School admin only)' })
+  @ApiResponse({ status: 200, description: 'List of instructors' })
+  @ApiResponse({ status: 401, description: 'Unauthorized - School admin token required' })
+  @ApiResponse({ status: 404, description: 'Course not found' })
+  async getCourseInstructors(@Param('id', ParseUUIDPipe) courseId: string) {
+    return this.coursesService.getCourseInstructors(courseId);
   }
 }

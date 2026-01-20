@@ -44,9 +44,20 @@ export class UsersService {
     return user;
   }
 
+  async create(userData: any) {
+    return this.userModel.create(userData as any);
+  }
+
+  async findByRoleAndSchool(role: string, schoolId: string) {
+    return this.userModel.findAll({
+      where: { role, schoolId },
+    });
+  }
+
   async update(id: string, dto: UpdateUserDto) {
     const user = await this.userModel.findByPk(id);
     if (!user) return null;
     return user.update(dto as any);
   }
 }
+
