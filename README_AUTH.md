@@ -15,6 +15,36 @@ Environment variables (example):
 - `GOOGLE_CLIENT_ID` - Google OAuth client id
 - `GOOGLE_CLIENT_SECRET` - Google OAuth client secret
 - `GOOGLE_CALLBACK_URL` - Callback URL (e.g. http://localhost:3000/auth/google/callback)
+- `ROLE_SECRET` - Secret token used to authorize exceptional role changes via `/auth/change-role`
+
+For local development, you can export them in your shell:
+
+```bash
+export DB_HOST=localhost
+export DB_PORT=5432
+export DB_USER=postgres
+export DB_PASS=
+export DB_NAME=drc_db
+
+export GOOGLE_CLIENT_ID=your-google-client-id
+export GOOGLE_CLIENT_SECRET=your-google-client-secret
+export GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
+
+export ROLE_SECRET=your-very-secure-role-secret
+```
+
+To use the `change-role.sh` helper script and the corresponding API route, make sure you set `ROLE_SECRET` **in both the Nest server environment and the shell where you run the script**, with the same value:
+
+```bash
+# Terminal 1: start Nest API
+export ROLE_SECRET=your-very-secure-role-secret
+npm run dev
+
+# Terminal 2: change a user role
+cd /home/birusha/Documents/work/ed/drc-edhub-api
+export ROLE_SECRET=your-very-secure-role-secret
+./change-role.sh user@example.com admin
+```
 
 Notes:
 - The Google auth flow is implemented via `/auth/google` (start) and `/auth/google/callback` (redirect).

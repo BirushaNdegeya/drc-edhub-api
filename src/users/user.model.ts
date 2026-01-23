@@ -37,30 +37,30 @@ export class User extends Model<User> {
   declare id: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
-  firstname!: string;
+  declare firstname: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
-  lastname!: string;
+  declare lastname: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  surname?: string;
+  declare surname?: string;
 
   @Column({ type: DataType.INTEGER, allowNull: true })
-  age?: number;
+  declare age?: number;
 
   // School association
   @ForeignKey(() => School)
   @Column({ type: DataType.UUID, allowNull: true })
-  schoolId?: string;
+  declare schoolId?: string;
 
   @BelongsTo(() => School)
-  school?: School;
+  declare school?: School;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  province?: string;
+  declare province?: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  location?: string;
+  declare location?: string;
 
   @Column({
     type: DataType.ENUM(
@@ -73,54 +73,54 @@ export class User extends Model<User> {
     allowNull: false,
     defaultValue: 'student',
   })
-  role!: UserRole;
+  declare role: UserRole;
 
   @Column({ type: DataType.ENUM('male', 'female'), allowNull: true })
-  sex?: 'male' | 'female';
+  declare sex?: 'male' | 'female';
 
   @Column({ type: DataType.STRING, allowNull: true })
-  section?: string;
+  declare section?: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  class?: string;
+  declare class?: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
-  email!: string;
+  declare email: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  bio?: string;
+  declare bio?: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  country?: string;
+  declare country?: string;
 
   @Column({ type: DataType.DATE, allowNull: true })
-  dateBirth?: Date;
+  declare dateBirth?: Date;
 
   @Column({
     type: DataType.ENUM('nursery', 'primary', 'secondary', 'university', 'master'),
     allowNull: true,
   })
-  level?: EducationLevel;
+  declare level?: EducationLevel;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  avatar?: string;
+  declare avatar?: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  googleId?: string;
+  declare googleId?: string;
 
   // Associations
   @HasMany(() => Course, { foreignKey: 'createdById', as: 'createdCourses' })
-  createdCourses!: Course[];
+  declare createdCourses: Course[];
 
   @HasMany(() => Course, {
     foreignKey: 'instructorId',
     as: 'instructedCourses',
   })
-  instructedCourses!: Course[];
+  declare instructedCourses: Course[];
 
   @HasMany(() => Enrollment)
-  enrollments!: Enrollment[];
+  declare enrollments: Enrollment[];
 
   @HasMany(() => LessonProgress)
-  lessonProgresses!: LessonProgress[];
+  declare lessonProgresses: LessonProgress[];
 }

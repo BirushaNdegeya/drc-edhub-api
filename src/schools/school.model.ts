@@ -28,40 +28,43 @@ export class School extends Model<School> {
   declare id: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
-  name!: string;
+  declare name: string;
+
+  @Column({ type: DataType.STRING, allowNull: false })
+  declare slug: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  matricule?: string;
+  declare matricule?: string;
 
   @Column({
     type: DataType.ENUM('nursery', 'primary', 'secondary', 'university', 'master'),
     allowNull: true,
   })
-  level?: EducationLevel;
+  declare level?: EducationLevel;
 
   @Column({ type: DataType.TEXT, allowNull: true })
-  description?: string;
+  declare description?: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  logoUrl?: string;
+  declare logoUrl?: string;
 
   @Column({ type: DataType.INTEGER, allowNull: true })
-  member?: number;
+  declare member?: number;
 
   @Default(true)
   @Column({ type: DataType.BOOLEAN })
-  isActive!: boolean;
+  declare isActive: boolean;
 
   // Associations
   @HasMany(() => User)
-  users!: User[];
+  declare users: User[];
 
   @HasMany(() => Course)
-  courses!: Course[];
+  declare courses: Course[];
 
   @HasMany(() => Section)
-  sections!: Section[];
+  declare sections: Section[];
 
   @HasMany(() => Class)
-  classes!: Class[];
+  declare classes: Class[];
 }

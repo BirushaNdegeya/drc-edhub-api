@@ -11,6 +11,7 @@ async function main() {
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: false }),
   );
   app.enableCors();
+  app.setGlobalPrefix('api');
   const config = new DocumentBuilder()
     .setTitle('EdHub API')
     .setDescription('API documentation for frontend integration')
@@ -23,6 +24,7 @@ async function main() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
+
   await app.listen(process.env.PORT ?? 3000);
 }
 main();

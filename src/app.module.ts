@@ -26,17 +26,37 @@ export class DbSchemaSync implements OnModuleInit {
         );
         return;
       }
-      // Add avatar column if missing
-      await this.sequelize.query(
-        'ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "avatar" VARCHAR;',
+      // Ensure core user columns exist (idempotent, safe to run on every boot)
+      await this.sequelize.query(`
+        ALTER TABLE "users"
+        ADD COLUMN IF NOT EXISTS "avatar" VARCHAR,
+        ADD COLUMN IF NOT EXISTS "schoolId" UUID,
+        ADD COLUMN IF NOT EXISTS "country" VARCHAR,
+        ADD COLUMN IF NOT EXISTS "dateBirth" TIMESTAMP,
+        ADD COLUMN IF NOT EXISTS "level" VARCHAR
+      `);
+      this.logger.log(
+        'Ensured users.avatar, users.schoolId, users.country, users.dateBirth, users.level columns exist',
       );
-      this.logger.log('Ensured users.avatar column exists');
 
-      // Add schoolId column if missing
-      await this.sequelize.query(
-        'ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "schoolId" UUID;',
-      );
-      this.logger.log('Ensured users.schoolId column exists');
+      // Ensure core schools columns exist
+      // First create ENUM type if it doesn't exist
+      await this.sequelize.query(`
+        DO $$ BEGIN
+          CREATE TYPE "enum_schools_level" AS ENUM ('nursery', 'primary', 'secondary', 'university', 'master');
+        EXCEPTION
+          WHEN duplicate_object THEN null;
+        END $$;
+      `);
+      
+      await this.sequelize.query(`
+        ALTER TABLE "schools"
+        ADD COLUMN IF NOT EXISTS "slug" VARCHAR,
+        ADD COLUMN IF NOT EXISTS "matricule" VARCHAR,
+        ADD COLUMN IF NOT EXISTS "level" "enum_schools_level",
+        ADD COLUMN IF NOT EXISTS "member" INTEGER
+      `);
+      this.logger.log('Ensured schools.slug, schools.matricule, schools.level, and schools.member columns exist');
 
       // Check if schools table exists before adding foreign key
       const [tableResults] = await this.sequelize.query(`

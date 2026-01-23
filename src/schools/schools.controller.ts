@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   UseGuards,
   Request,
+  Logger,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -31,6 +32,8 @@ import { SchoolAdminGuard } from '../common/guards/school-admin.guard';
 @ApiTags('Schools')
 @Controller('schools')
 export class SchoolsController {
+  private readonly logger = new Logger(SchoolsController.name);
+
   constructor(private readonly schoolsService: SchoolsService) {}
 
   @Post()
@@ -47,8 +50,21 @@ export class SchoolsController {
   @Get()
   @ApiOperation({ summary: 'Get all schools' })
   @ApiResponse({ status: 200, description: 'List of all schools' })
-  findAll() {
-    return this.schoolsService.findAll();
+  async findAll() {
+    this.logger.log('GET /schools - fetching all schools');
+    try {
+      const result = await this.schoolsService.findAll();
+      this.logger.log(
+        `GET /schools - fetched ${Array.isArray(result) ? result.length : 1} record(s)`,
+      );
+      return result;
+    } catch (error: any) {
+      this.logger.error(
+        `GET /schools - failed: ${error?.message ?? error}`,
+        error?.stack,
+      );
+      throw error;
+    }
   }
 
   @Get(':id')

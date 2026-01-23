@@ -1,9 +1,20 @@
-import { Controller, Get, Req, UseGuards, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+  BadRequestException,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import type { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -11,6 +22,7 @@ export class AuthController {
   constructor(
     private usersService: UsersService,
     private authService: AuthService,
+    private configService: ConfigService,
   ) {}
 
   @Get('google')
@@ -45,5 +57,59 @@ export class AuthController {
     )}`;
 
     return res.redirect(redirectUrl);
+  }
+
+  @Post('change-role')
+  @ApiOperation({
+    summary:
+      'Change user role using a secret key (for exceptional/admin scripting use only)',
+  })
+  @ApiResponse({ status: 200, description: 'Role updated successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid payload' })
+  @ApiResponse({ status: 401, description: 'Invalid secret' })
+  async changeRole(
+    @Body('email') email: string,
+    @Body('role')
+    role:
+      | 'student'
+      | 'instructor'
+      | 'admin'
+      | 'inspector'
+      | 'school-admin',
+    @Body('secret') secret: string,
+  ) {
+    if (!email || !role || !secret) {
+      throw new BadRequestException('email, role and secret are required');
+    }
+
+    const expectedSecret = this.configService.get<string>('ROLE_SECRET');
+
+    if (!expectedSecret) {
+      throw new UnauthorizedException('Server ROLE_SECRET is not configured');
+    }
+
+    if (secret !== expectedSecret) {
+      throw new UnauthorizedException('Invalid secret');
+    }
+
+    const allowedRoles = [
+      'student',
+      'instructor',
+      'admin',
+      'inspector',
+      'school-admin',
+    ] as const;
+    if (!allowedRoles.includes(role)) {
+      throw new BadRequestException('Invalid role value');
+    }
+
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    await user.update({ role } as any);
+
+    return { message: 'role updated successfully', email, role };
   }
 }
