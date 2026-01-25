@@ -19,6 +19,8 @@ import {
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { UserDto } from './dto/user.dto';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { User } from './user.model';
 
 @ApiTags('users')
 @Controller('users')
@@ -114,5 +116,33 @@ export class UsersController {
     const updated = await this.usersService.update(id, dto);
     if (!updated) throw new NotFoundException('User not found');
     return updated;
+  }
+
+  @Get('role')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('jwt')
+  @ApiOperation({ summary: 'Get current user role' })
+  @ApiOkResponse({
+    description: 'User role returned successfully',
+    schema: {
+      example: {
+        role: 'student',
+      },
+    },
+  })
+  @ApiNotFoundResponse({ description: 'User not found (invalid token id)' })
+  async getRole(@CurrentUser() user: User) {
+    if (!user || !user.id) {
+      throw new NotFoundException('User not found');
+    }
+    
+    const currentUser = await this.usersService.findById(user.id);
+    if (!currentUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    return {
+      role: currentUser.role,
+    };
   }
 }

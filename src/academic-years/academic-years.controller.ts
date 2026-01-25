@@ -8,12 +8,14 @@ import {
   Delete,
   ParseUUIDPipe,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { AcademicYearsService } from './academic-years.service';
 import { CreateAcademicYearDto } from './dto/create-academic-year.dto';
@@ -44,6 +46,44 @@ export class AcademicYearsController {
   @ApiResponse({ status: 200, description: 'List of all academic years' })
   findAll() {
     return this.academicYearsService.findAll();
+  }
+
+  @Get('search/query')
+  @ApiOperation({ summary: 'Fast search for academic years' })
+  @ApiQuery({
+    name: 'q',
+    required: true,
+    type: String,
+    description: 'Search query (searches in name and province)',
+    example: '2023',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Maximum number of results (default: 10)',
+    example: 10,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Search results',
+    schema: {
+      example: [
+        {
+          id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+          name: '2023-2024',
+          province: 'Kinshasa',
+        },
+      ],
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Missing or empty search query' })
+  search(
+    @Query('q') q: string,
+    @Query('limit') limit?: string,
+  ) {
+    const limitNum = limit ? Math.min(parseInt(limit, 10) || 10, 100) : 10;
+    return this.academicYearsService.search(q, limitNum);
   }
 
   @Get(':id')
