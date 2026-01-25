@@ -10,6 +10,7 @@ import { AcademicYearsModule } from './academic-years/academic-years.module';
 import { SchoolsModule } from './schools/schools.module';
 import { CoursesModule } from './courses/courses.module';
 import { EmailModule } from './common/email/email.module';
+import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
 
 // Ensure DB schema includes avatar column when app boots (safe, idempotent)
 @Injectable()
@@ -131,6 +132,7 @@ export class DbSchemaSync implements OnModuleInit {
     SchoolsModule,
     CoursesModule,
     EmailModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService, DbSchemaSync],
